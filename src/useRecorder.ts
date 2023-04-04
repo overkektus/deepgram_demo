@@ -34,7 +34,7 @@ export const useMediaRecorder = () => {
     setMediaRecorder(recorder);
 
     recorder.addEventListener("dataavailable", async (event) => {
-      if (event.data.size > 0) {
+      if (wsc.readyState === 1 && event.data.size > 0) {
         wsc.send(event.data);
       }
     });
@@ -44,22 +44,18 @@ export const useMediaRecorder = () => {
 
   const stop = () => {
     setIsRun(false);
-    if (websocket) {
-      websocket.close();
+    if (mediaRecorder && mediaRecorder.state === "recording") {
+      mediaRecorder.stop();
     }
     if (mediaStream) {
       mediaStream.getAudioTracks().forEach((track) => {
         track.stop();
       });
     }
-    if (mediaRecorder) {
-      mediaRecorder.stop();
+    if (websocket) {
+      websocket.close();
     }
   };
 
-  const clear = () => {
-    setMessages([]);
-  };
-
-  return [start, stop, clear, isRun, messages] as const;
+  return [start, stop, isRun, messages] as const;
 };
