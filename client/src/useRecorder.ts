@@ -47,11 +47,13 @@ export const useMediaRecorder = () => {
     if (mediaRecorder && mediaRecorder.state === "recording") {
       mediaRecorder.stop();
     }
+
     if (mediaStream) {
       mediaStream.getAudioTracks().forEach((track) => {
         track.stop();
       });
     }
+    
     if (websocket) {
       websocket.close();
     }

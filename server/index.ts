@@ -1,6 +1,5 @@
 import { Deepgram } from "@deepgram/sdk";
 import dotenv from "dotenv";
-import express from "express";
 import { WebSocketServer } from "ws";
 import fs from "fs";
 import https from "https";
@@ -15,14 +14,11 @@ if (!deepgramApiKey) {
 
 const deepgram = new Deepgram(deepgramApiKey);
 
-const app = express();
-
 const server = https.createServer(
   {
-    key: fs.readFileSync("./server/security/key.pem"),
-    cert: fs.readFileSync("./server/security/cert.pem"),
+    key: fs.readFileSync("./security/key.pem"),
+    cert: fs.readFileSync("./security/cert.pem"),
   },
-  app
 );
 
 server.listen(port, () => {
@@ -34,7 +30,8 @@ const wss = new WebSocketServer({ server });
 wss.on("connection", (ws) => {
   const deepgramSocket = deepgram.transcription.live({
     punctuate: true,
-    language: "de",
+    language: "en",
+    model: "nova"
   });
   deepgramSocket.addListener("open", () => {
     console.log("open");
